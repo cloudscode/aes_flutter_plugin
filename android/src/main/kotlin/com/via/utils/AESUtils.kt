@@ -17,19 +17,18 @@ object AESUtils {
      * @throws Exception
      */
     fun encrypt(content: String, key: String): String {
-        val key=   Base64Utils.encode(key)
         val fullAlg = "AES/CBC/PKCS5Padding"
         val cipher = Cipher.getInstance(fullAlg)
         val iv =
-            IvParameterSpec(
-                initIv(
-                    fullAlg
+                IvParameterSpec(
+                        initIv(
+                                fullAlg
+                        )
                 )
-            )
         cipher.init(
-            Cipher.ENCRYPT_MODE,
-            SecretKeySpec(Base64Utils.decodeByte(key), "AES"),
-            iv
+                Cipher.ENCRYPT_MODE,
+                SecretKeySpec(Base64Utils.decodeByte(key), "AES"),
+                iv
         )
         val encryptBytes = cipher.doFinal(content.toByteArray(charset("UTF-8")))
         return Base64Utils.encodeByte(encryptBytes)
@@ -58,9 +57,9 @@ object AESUtils {
      * @return 原文
      */
     fun decrypt(content: String, key: String): String {
-        val key=   Base64Utils.encode(key)
         //反序列化AES密钥
-        val keySpec =SecretKeySpec(Base64Utils.decodeByte(key), "AES")
+        val keySpec =
+                SecretKeySpec(Base64Utils.decodeByte(key), "AES")
 
         //128bit全零的IV向量
         val iv = ByteArray(16)
@@ -68,15 +67,15 @@ object AESUtils {
             iv[i] = 0
         }
         val ivParameterSpec =
-            IvParameterSpec(iv)
+                IvParameterSpec(iv)
 
         //初始化加密器并加密
         return try {
             val deCipher =
-                Cipher.getInstance("AES/CBC/PKCS5Padding")
+                    Cipher.getInstance("AES/CBC/PKCS5Padding")
             deCipher.init(Cipher.DECRYPT_MODE, keySpec, ivParameterSpec)
             val encryptedBytes =
-                Base64Utils.decodeByte(content)
+                    Base64Utils.decodeByte(content)
             val bytes = deCipher.doFinal(encryptedBytes)
             String(bytes)
         } catch (e: Exception) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:aesflutterplugin/aesflutterplugin.dart';
 
@@ -25,8 +25,13 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String result = "";
+    String secretKey="1bb6e77e874341fe";
+    var encoder = new Base64Encoder();
+    var secretKeyEncode = utf8.encode(secretKey);
+    var secretKeyBase64 = encoder.convert(secretKeyEncode);
+
     Map<String, String> map = new Map();
-    map.putIfAbsent("key", () => "4536417157def960");
+    map.putIfAbsent("key", () => secretKeyBase64);
     map.putIfAbsent("data", () => "via");
     try {
       result = await Aesflutterplugin.encrypt(map);
@@ -36,7 +41,7 @@ class _MyAppState extends State<MyApp> {
     print("result" + result);
     try {
       map = new Map();
-      map.putIfAbsent("key", () => "4536417157def960");
+      map.putIfAbsent("key", () =>secretKeyBase64);
       map.putIfAbsent("data", () => result);
       result = await Aesflutterplugin.decrypt(map);
     } on PlatformException {
